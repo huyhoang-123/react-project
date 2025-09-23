@@ -1,0 +1,11 @@
+.post {
+  text-align: center;
+}
+.post__list {
+  padding: 20px;
+  margin-bottom: 20px;
+  border: 1px solid black;
+  background-color: blanchedalmond;
+}
+
+/*# sourceMappingURL=PostList.css.map */

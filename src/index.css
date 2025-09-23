@@ -1,0 +1,11 @@
+*{
+     font-family: "Outfit", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 300 400 500 600 700 800 900;
+  font-style: normal;
+}
+.active{
+    color: black;
+    text-decoration: none;
+    font-weight: bold;
+}

@@ -1,0 +1,16 @@
+ @mixin flexLayOut{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+ }
+ @mixin gridLayout{
+    display: grid;
+    justify-content: center;
+    align-items: center;
+ }
+
+ $primary-color: #112D4E;
+
+ $secondary-color:#AAAAAA;
+
+ $background-color:#DBE2EF;

@@ -1,0 +1,9 @@
+.post {
+    text-align: center;
+    &__list {
+        padding: 20px;
+        margin-bottom: 20px;
+        border: 1px solid black;
+        background-color: blanchedalmond;
+    }
+}
