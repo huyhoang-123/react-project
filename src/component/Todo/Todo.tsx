@@ -13,24 +13,22 @@ import type { AppDispatch, RootState } from "../../state/Store";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import type { todoType } from "../../context/todoSlice";
 const Todo = () => {
-   type fieldType = {
+  type fieldType = {
     name: string;
   };
   const [todos, setTodos] = useState<any>(null);
   const dispatch = useDispatch<AppDispatch>();
 
   const { loading, error } = useSelector((state: RootState) => state.todo);
- 
+
   const newTodo: todoType = {
     name: "",
     description: "Write comprehensive API documentation",
     assignee: "testuser",
     priority: "HIGH",
     status: "TODO",
-    id:''
   };
-
-  const [editId, setEditId] = useState<any>("");
+  const [editId, setEditId] = useState<string | null>(null);
 
   const {
     register,
@@ -39,39 +37,55 @@ const Todo = () => {
   } = useForm<fieldType>();
 
   const onSubmit: SubmitHandler<fieldType> = async (data) => {
-      const tempId = `temp_${Date.now().toString()}`
-      const tempTodo: todoType = { ...newTodo, name: data.name, id: tempId };
-    setTodos((prev: fieldType[]) => [...prev, tempTodo]);
+    const newData = { ...newTodo, name: data.name };
     try {
-    const result = await dispatch(createTodo(tempTodo));
-    if (result.payload?.success) {
-      // Thay id tạm bằng id thật từ server
-      setTodos((prev:any) =>
-        prev.map((t:any) => t.id === tempId ? { ...t, id: result.payload.data.id } : t)
-      );
-    } else {
-      // rollback nếu server lỗi
-      setTodos((prev:any) => prev.filter((t:any) => t.id !== tempId));
+      const res = await dispatch(createTodo(newData));
+      if (res.payload.success) {
+        setTodos((prev: any) => [...prev, res.payload.data.todo]);
+      }
+    } catch (error) {
+      console.error(error);
     }
-  } catch (err) {
-    setTodos((prev:any)=> prev.filter((t:any) => t.id !== tempId));
-  }
   };
 
   const handleDelete = async (id: string) => {
+    console.log(id);
     const prevState = [...todos];
-    setTodos((prev: any) => prev.filter((item: any) => item.id !== id));
-   if (!id.startsWith('temp')){
+    setTodos((prev: any) => prev.filter((t: any) => t.id !== id));
+
     try {
       const res = await dispatch(deleteTodo(id));
       if (!res.payload?.success) {
         setTodos(prevState);
-        console.log(!res.payload?.success)
       }
     } catch {
       setTodos(prevState);
     }
-  }
+  };
+
+  const handleEditTodo = (id: string) => {
+    setEditId(id); // bật edit cho todo này
+  };
+
+  const handleChangeTodo = (id: string, value: string) => {
+    setTodos((prev: any) =>
+      prev.map((todo: any) =>
+        todo.id === id ? { ...todo, name: value } : todo
+      )
+    );
+  };
+
+  const handleSaveTodo = async (todo: todoType) => {
+    console.log(todo)
+    try {
+      const res = await dispatch(editTodo(todo));
+      if (res.payload?.success) {
+        setEditId(null); // tắt edit
+
+      }
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   const loadTodo = async () => {
@@ -111,36 +125,55 @@ const Todo = () => {
           </Button>
         </Stack>
       </form>
-      <ul>
+      <ul style={{ listStyleType: "none" }}>
         {loading ? (
           <p style={{ textAlign: "center" }}>Loading...</p>
         ) : (
-          todos?.map((item: any) => (
-            <Stack
-              direction="row"
-              spacing={2}
-              justifyContent="center"
-              alignItems="center"
-              sx={{ mt: 5 }}
-            >
-              <TextField
-                value={item.name}
-                sx={{ height: 50 }}
+          <Stack
+            direction="column"
+            spacing={2}
+            justifyContent="center"
+            alignItems="center"
+            sx={{ mt: 5 }}
+          >
+            {todos?.map((item: any) => (
+              <li
                 key={item.id}
-              ></TextField>
-              <Button variant="contained" sx={{ height: 50 }}>
-                EDIT
-              </Button>
-
-              <Button
-                variant="contained"
-                sx={{ height: 50 }}
-                onClick={() => handleDelete(item.id)}
+                style={{ display: "flex", gap: 8, marginBottom: 8 }}
               >
-                DELETE
-              </Button>
-            </Stack>
-          ))
+                <TextField
+                  value={item.name}
+                  disabled={editId !== item.id}
+                  onChange={(e) => handleChangeTodo(item.id, e.target.value)}
+                  sx={{ height: 50 }}
+                />
+                {editId === item.id ? (
+                  <Button
+                    variant="contained"
+                    sx={{ height: 50 }}
+                    onClick={() => handleSaveTodo(item)}
+                  >
+                    SAVE
+                  </Button>
+                ) : (
+                  <Button
+                    variant="contained"
+                    sx={{ height: 50 }}
+                    onClick={() => handleEditTodo(item.id)}
+                  >
+                    EDIT
+                  </Button>
+                )}
+                <Button
+                  variant="contained"
+                  sx={{ height: 50 }}
+                  onClick={() => handleDelete(item.id)}
+                >
+                  DELETE
+                </Button>
+              </li>
+            ))}
+          </Stack>
         )}
       </ul>
     </>

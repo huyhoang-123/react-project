@@ -7,7 +7,6 @@ export type todoType = {
   assignee: string;
   priority: string;
   status: string;
-  id:string
 };
 
 export const fetchTodo = createAsyncThunk("todo/get", async () => {
@@ -34,7 +33,7 @@ export const createTodo = createAsyncThunk(
 );
 export const editTodo = createAsyncThunk("todo/put", async (data: any) => {
   try {
-    const res = await api.put(`/todos/${data.id}`);
+    const res = await api.put(`/todos/${data.id}`,data);
     return res.data;
   } catch (error) {
     console.error(`edit error: ${error}`);
