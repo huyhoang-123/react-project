@@ -1,4 +1,4 @@
-import TextField from "@mui/material/TextField";
+import TextField, { type TextFieldProps } from "@mui/material/TextField";
 import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
 import { useEffect, useState } from "react";
@@ -12,6 +12,9 @@ import {
 import type { AppDispatch, RootState } from "../../state/Store";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import type { todoType } from "../../context/todoSlice";
+import DeleteIcon from "@mui/icons-material/Delete";
+import AddIcon from "@mui/icons-material/Add";
+import { createTheme, styled, ThemeProvider } from "@mui/material";
 const Todo = () => {
   type fieldType = {
     name: string;
@@ -76,12 +79,11 @@ const Todo = () => {
   };
 
   const handleSaveTodo = async (todo: todoType) => {
-    console.log(todo)
+    console.log(todo);
     try {
       const res = await dispatch(editTodo(todo));
       if (res.payload?.success) {
         setEditId(null); // tắt edit
-
       }
     } catch (err) {
       console.error(err);
@@ -97,8 +99,35 @@ const Todo = () => {
     loadTodo();
   }, []);
 
+
+  const theme = createTheme({
+    components: {
+      MuiButton: {
+        defaultProps: {
+          disableRipple: true,
+          variant: "contained",
+        },
+        styleOverrides: {
+          root: {
+            height: 50,
+            variants:[
+              {
+                props:{
+                  color:'warning'
+
+                },
+                style:{
+                fontSize:'20px'
+              }
+              }
+            ]
+          },
+        },
+      },
+    },
+  });
   return (
-    <>
+    <ThemeProvider theme={theme}>
       <form onSubmit={handleSubmit(onSubmit)}>
         <Stack
           direction="row"
@@ -120,8 +149,8 @@ const Todo = () => {
             helperText={errors.name?.message}
             sx={{ height: 50 }}
           />
-          <Button variant="contained" type="submit" sx={{ height: 50 }}>
-            Submit
+          <Button type="submit" endIcon={<AddIcon />}>
+            Add
           </Button>
         </Stack>
       </form>
@@ -148,35 +177,25 @@ const Todo = () => {
                   sx={{ height: 50 }}
                 />
                 {editId === item.id ? (
-                  <Button
-                    variant="contained"
-                    sx={{ height: 50 }}
-                    onClick={() => handleSaveTodo(item)}
-                  >
-                    SAVE
-                  </Button>
+                  <Button onClick={() => handleSaveTodo(item)}>SAVE</Button>
                 ) : (
-                  <Button
-                    variant="contained"
-                    sx={{ height: 50 }}
-                    onClick={() => handleEditTodo(item.id)}
-                  >
-                    EDIT
-                  </Button>
+                  <Button onClick={() => handleEditTodo(item.id)}>EDIT</Button>
                 )}
                 <Button
-                  variant="contained"
-                  sx={{ height: 50 }}
+                  sx={{ bgcolor: "error.main" }}
                   onClick={() => handleDelete(item.id)}
+                  endIcon={<DeleteIcon />}
+                  color="warning"
                 >
                   DELETE
                 </Button>
+               
               </li>
             ))}
           </Stack>
         )}
       </ul>
-    </>
+    </ThemeProvider>
   );
 };
 
