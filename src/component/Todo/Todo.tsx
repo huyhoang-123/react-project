@@ -1,6 +1,6 @@
 import TextField, { type TextFieldProps } from "@mui/material/TextField";
 import Stack from "@mui/material/Stack";
-import Button from "@mui/material/Button";
+import Button, { type ButtonProps } from "@mui/material/Button";
 import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import {
@@ -36,10 +36,12 @@ const Todo = () => {
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors },
   } = useForm<fieldType>();
 
   const onSubmit: SubmitHandler<fieldType> = async (data) => {
+    console.log(data);
     const newData = { ...newTodo, name: data.name };
     try {
       const res = await dispatch(createTodo(newData));
@@ -99,6 +101,18 @@ const Todo = () => {
     loadTodo();
   }, []);
 
+  // type CustomButtoType = ButtonProps & {
+  //   isError?: boolean
+  // }
+
+  // const CustomButton = styled(Button,{shouldForwardProp:(prop)=>prop !== 'isError'})<CustomButtoType>(({theme,isError})=>({
+
+  //    width: 300,
+  // backgroundColor: isError
+  //   ? theme.palette.error.main
+  //   : theme.palette.success.main,
+  // color: theme.palette.common.white,
+  // }))
 
   const theme = createTheme({
     components: {
@@ -110,19 +124,16 @@ const Todo = () => {
         styleOverrides: {
           root: {
             height: 50,
-            variants:[
-              {
-                props:{
-                  color:'warning'
-
-                },
-                style:{
-                fontSize:'20px'
-              }
-              }
-            ]
           },
         },
+        variants: [
+          {
+            props: { color: "warning" },
+            style: {
+              fontSize: "20px",
+            },
+          },
+        ],
       },
     },
   });
@@ -152,6 +163,8 @@ const Todo = () => {
           <Button type="submit" endIcon={<AddIcon />}>
             Add
           </Button>
+          {/* <Button onClick={()=> setValue("name", 'hehe,',{ shouldValidate: false })}>set value</Button> */}
+          {/* <CustomButton isError={true}>xvvxvxvx</CustomButton> */}
         </Stack>
       </form>
       <ul style={{ listStyleType: "none" }}>
@@ -189,7 +202,6 @@ const Todo = () => {
                 >
                   DELETE
                 </Button>
-               
               </li>
             ))}
           </Stack>

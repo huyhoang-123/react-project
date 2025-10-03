@@ -5,12 +5,14 @@ import { ShareLoginState } from "./context/regisSlice";
 
 import Login from "./component/Login/Login";
 import Todo from "./component/Todo/Todo";
+import Register from "./component/Register/Register";
 
 const App = () => {
-  const userState = useSelector(ShareLoginState);
+  // const userState = useSelector(ShareLoginState);
   return (
     <>
-    {userState? <Todo/>: <Login/> }
+    {/* {userState? <Todo/>: <Login/> } */}
+    <Register/>
     </>
   );
 };

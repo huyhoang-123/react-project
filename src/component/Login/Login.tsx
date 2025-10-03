@@ -22,7 +22,7 @@ const Login = () => {
   };
 
   return (
-    <section className="form-validation-page">
+    <div className="form-validation-page">
       <div className="form-validation">
         <div className="login-form  form-validation--layout">
           <h2 className="form-title">Login</h2>
@@ -60,7 +60,7 @@ const Login = () => {
           </form>
         </div>
       </div>
-    </section>
+    </div>
   );
 };
 
