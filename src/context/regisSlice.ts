@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+import type { RootState } from "../store/Store";
 
 type initStateType={
     isLogin: boolean
@@ -21,6 +22,6 @@ export const regisSlice = createSlice({
     }
 })
 
-export const ShareLoginState= (state:any)=>state.regis.isLogin;
+export const ShareLoginState= (state:RootState)=>state.regis.isLogin;
 export const {hasLogin, hasNotLogin}= regisSlice.actions;
 export default regisSlice.reducer;
